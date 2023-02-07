@@ -1,6 +1,11 @@
 import 'package:appquiz/database/category_provider.dart';
+import 'package:appquiz/state/state_manage.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../database/db_helper.dart';
+
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -18,7 +23,7 @@ class _HomeState extends State<Home> {
         centerTitle: true,
       ),
 
-      body: FutureBuilder<List<Category>>(
+      body: FutureBuilder<List<Category>?>(
           future: getCategories(),
           builder: (context, snapshot){
             if(snapshot.hasError){
@@ -48,7 +53,13 @@ class _HomeState extends State<Home> {
                                             children: <Widget>[
                                               Center(
                                                 child: AutoSizeText(
-
+                                                  '${category.name}',
+                                                  style: TextStyle(
+                                                    color: category.ID == -1 ? Colors.white : Colors.black,
+                                                    fontWeight: FontWeight.bold
+                                                  ),
+                                                  maxLines: 1,
+                                                  textAlign: TextAlign.center,
                                                 ),
                                               )
                                             ],
@@ -56,9 +67,17 @@ class _HomeState extends State<Home> {
                                         ),
                                       );
                                     }).toList(),);
-            }
+            } else return Center(child: CircularProgressIndicator());
+
           },
       )
     );
+  }
+
+  Future<List<Category>?> getCategories() async{
+      var db = await copyDB();
+      var result = await CategoryProvider().getCategories(db);
+      //context.read(categoryListProvider).state = result;
+      return result;
   }
 }

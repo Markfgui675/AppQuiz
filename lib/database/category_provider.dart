@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -41,7 +39,7 @@ class CategoryProvider{
     return null;
   }
 
-  Future<List<Category>?> getCategories(Database db, int id) async{
+  Future<List<Category>?> getCategories(Database db) async{
     var maps = await db.query(tableCategoryName,
         columns: [
           columnMainCategoryId,
@@ -55,7 +53,7 @@ class CategoryProvider{
 }
 
 class CategoryList extends StateNotifier<List<Category>>{
-  CategoryList(List<Category> state):super(state ?? []);
+   CategoryList(List<Category> state):super(state ?? []);
 
   void addAll(List<Category> category){
     state.addAll(category);
